@@ -38,7 +38,6 @@ fun main() {
     createdBook = bookService.createBook( otherBook)
     console.writer("Created user: $createdBook")
 
-
     // Obtenemos todos los libros
     var allBooks = bookService.getAllBooks()
     console.writer(allBooks.toString())
