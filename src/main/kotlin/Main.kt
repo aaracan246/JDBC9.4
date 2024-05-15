@@ -29,9 +29,9 @@ fun main() {
     console.writer("Found user: $foundBook")
 
     // Actualizamos el libro
-    val updatedBook = foundBook?.copy(title = "Moon Palace")
-    val savedUser = updatedBook?.let { bookService.updateBook(it) }
-    console.writer("Updated user: $savedUser")
+    val updatedBook = foundBook?.copy(title = "City of Glass")
+    val savedBook = updatedBook?.let { bookService.updateBook(it) }
+    console.writer("Updated user: $savedBook")
 
     val otherBook = Book(UUID.randomUUID(), "The Yellow Wallpaper", "Charlotte Perkins Gilman", "Ficción", 1892)
 
@@ -44,8 +44,8 @@ fun main() {
     console.writer(allBooks.toString())
 
     // Eliminamos el libro
-    if (savedUser != null) {
-        bookService.deleteBook(savedUser.id)
+    if (savedBook != null) {
+        bookService.deleteBook(savedBook.id)
     }
     console.writer("Book deleted")
 
