@@ -1,20 +1,20 @@
 package org.example.bookDAO
-
-import org.example.db.DataBase
 import org.example.consoleIO.Console
 import org.example.entity.Book
 import org.example.interfaces.IBookDAO
 import java.sql.SQLException
 import java.util.*
+import javax.sql.DataSource
 
-class BookDAO(private val console: Console): IBookDAO {
-    private val connection = DataBase.getConnection()
+class BookDAO(private val database: DataSource, private val console: Console): IBookDAO {
+
+
 
     override fun createBook(book: Book): Book? {
         val sql = "INSERT INTO PRODUCTS (ID, TITLE, AUTHOR, THEME, PUBLISHED) VALUES (?, ?, ?, ?, ?)"
 
         return try {
-            connection.use { connection ->
+            database.connection.use { connection ->
                 connection?.prepareStatement(sql).use { statement ->
                     statement?.setString(1, book.id.toString())
                     statement?.setString(2, book.title)
@@ -40,7 +40,7 @@ class BookDAO(private val console: Console): IBookDAO {
     override fun getAllBooks(): List<Book>? {
         val sql = "SELECT * FROM BOOKS"
         return try {
-            connection.use { connection ->
+            database.connection.use { connection ->
                 connection?.prepareStatement(sql).use { stmt ->
                     val rs = stmt?.executeQuery()
                     val products = mutableListOf<Book>()
@@ -61,21 +61,21 @@ class BookDAO(private val console: Console): IBookDAO {
             }
         }catch (e:SQLException){
             console.writer(msg = "Something unexpected happened while trying to connect to the database.", true)
-            connection?.close()
+            database.connection?.close()
             null
 
         }catch (e:Exception){
             console.writer(msg = "Something unexpected happened while trying to connect to the database.", true)
-            connection?.close()
+            database.connection?.close()
             null
         }
     }
 
 
-    override fun getBookById(id: Int): Book? {
+    override fun getBookById(id: UUID): Book? {
         val sql = "SELECT * FROM BOOKS WHERE id = (?)"
         return try {
-            connection.use { connection ->
+            database.connection.use { connection ->
                 connection?.prepareStatement(sql).use { statement ->
                     statement?.setString(1, id.toString())
                     val rs = statement?.executeQuery()
@@ -95,12 +95,12 @@ class BookDAO(private val console: Console): IBookDAO {
             }
         }catch (e:SQLException){
             console.writer(e.message!!, true)
-            connection?.close()
+            database.connection?.close()
             null
 
         } catch (e:Exception){
             console.writer(e.message!!, true)
-            connection?.close()
+            database.connection?.close()
             null
         }
     }
@@ -109,7 +109,7 @@ class BookDAO(private val console: Console): IBookDAO {
     override fun updateBooks(book: Book): Book? {
         val sql = "UPDATE BOOKS SET id = ?, title = ?, author = ?, theme = ?, published = ?"
         return try {
-            connection.use { connection ->
+            database.connection.use { connection ->
                 connection?.prepareStatement(sql).use { statement ->
                     statement?.setString(1, book.id.toString())
                     statement?.setString(2, book.title)
@@ -123,20 +123,20 @@ class BookDAO(private val console: Console): IBookDAO {
             }
         } catch (e:SQLException){
             console.writer(msg = "Something unexpected happened while trying to connect to the database.", true)
-            connection?.close()
+            database.connection?.close()
             null
 
         } catch (e:Exception){
             console.writer(msg = "Something unexpected happened while trying to connect to the database.", true)
-            connection?.close()
+            database.connection?.close()
             null
         }
     }
 
-    override fun deleteBook(id: Int): Boolean {
+    override fun deleteBook(id: UUID): Boolean {
         val sql = "DELETE FROM BOOKS WHERE id = (?)"
         return try {
-            connection.use {connection ->
+            database.connection.use {connection ->
                 connection?.prepareStatement(sql).use { statement ->
                     statement?.setString(1, id.toString())
                     statement?.executeUpdate()
@@ -146,12 +146,12 @@ class BookDAO(private val console: Console): IBookDAO {
             }
         } catch (e:SQLException){
             console.writer(msg = "Something unexpected happened while trying to connect to the database.", true)
-            connection?.close()
+            database.connection?.close()
             false
 
         }catch (e:Exception){
             console.writer(msg = "Something unexpected happened while trying to connect to the database.", true)
-            connection?.close()
+            database.connection?.close()
             false
         }
     }

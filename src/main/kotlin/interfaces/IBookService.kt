@@ -3,10 +3,10 @@ package org.example.interfaces
 import org.example.entity.Book
 import java.util.*
 
-interface IBookDAO {
+interface IBookService {
     fun createBook(book: Book): Book?
+    fun getByBookId(id: UUID): Book?
+    fun updateBook(user: Book): Book?
+    fun deleteBook(id: UUID)
     fun getAllBooks(): List<Book>?
-    fun getBookById(id: UUID): Book?
-    fun updateBooks(book: Book): Book?
-    fun deleteBook(id: UUID): Boolean
 }
